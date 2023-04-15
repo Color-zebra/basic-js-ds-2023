@@ -67,9 +67,9 @@ class BinarySearchTree {
     return null;
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  remove(data) {
+    if (this.tree === null) return null
+    this.tree = this.removeNode(this.tree, data)
   }
 
   min() {
@@ -88,6 +88,38 @@ class BinarySearchTree {
       curr = curr.right
     }
     return curr.data
+  }
+
+  searchMin(node) {
+    if (node.left !== null) return this.searchMin(node.left);
+    return node;
+
+  }
+
+  removeNode(currNode, data) {
+    console.log('Чекаем...');
+    let isChildrenAbsent = currNode.left === null && currNode.right === null;
+    if (currNode.data === data) { //если нашли нужный элемент
+      console.log('Нашли');
+      if (isChildrenAbsent) return null;
+      if (currNode.left === null) return currNode.right;
+      if (currNode.right === null) return currNode.left;
+
+      let minFromRight = this.searchMin(currNode.right);
+      currNode.data = minFromRight.data; //забираем в текущий узел значение минимума из правой ветки, вместо удаленного
+      currNode.right = this.removeNode(currNode.right, minFromRight.data) // избавляемся от трупа минимального узла из правой ветки
+      return currNode //возвращаем измененный текущий узел
+    }
+    //если не нашли, ищем дальше
+    console.log('Не то!');
+    if (data < currNode.data && currNode.left !== null) {
+      console.log('Ищем левее...');
+      currNode.left = this.removeNode(currNode.left, data)
+    } else if (data > currNode.data && currNode.right !== null) {
+      console.log('Ищем правее...');
+      currNode.right = this.removeNode(currNode.right, data)
+    }
+      return currNode;
   }
 }
 
